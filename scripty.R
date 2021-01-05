@@ -27,4 +27,15 @@ my_station <- get_nearest_measurements(lat = 51,
 my_station$history %>%
   ggplot(mapping = aes(x = time$from, y = measure$PM25)) +
   geom_col()
-
+new_london_data <- london_data %>%
+  mutate(colortouse = if_else(is_airly, "red", "blue"))
+library(leaflet)
+leaflet() %>%
+  addProviderTiles(providers$OpenTopoMap) %>%
+  setView(-0.119,51.525, zoom = 8) %>%
+  addCircleMarkers(lng = new_london_data$location$longitude,
+                   lat = new_london_data$location$latitude,
+                   color = new_london_data$colortouse) %>%
+  addTiles ('https://tiles.macrostrat.org/carto/{z}/{x}/{y}.png', 
+            options = tileOptions(opacity = 0.6))
+  
